@@ -21,82 +21,88 @@
 
 class SGMStereo {
 public:
-	SGMStereo();
-	~SGMStereo();
+  SGMStereo();
+  ~SGMStereo();
 
-	void setDisparityTotal(const int disparityTotal);
-	void setDisparityFactor(const double disparityFactor);
-	void setDataCostParameters(const int sobelCapValue,
-							   const int censusWindowRadius,
-							   const double censusWeightFactor,
-							   const int aggregationWindowRadius);
-	void setSmoothnessCostParameters(const int smoothnessPenaltySmall, const int smoothnessPenaltyLarge);
-	void setConsistencyThreshold(const int consistencyThreshold);
-	void setEnforceLeftRightConsistency(const bool enforceLeftRightConsistency);
+  void setParams(int disparity_total, double disparity_factor, int sobel_cap_value,
+                 int census_window_radius, double census_weight_factor,
+                 int aggregration_window_radius, int smoothness_penalty_small,
+                 int smoothness_penalty_large, int consistency_threshold, int max_speckle_size);
 
-	void initialize(const int width, const int height);
-	void compute(const cv::Mat& leftImage, const cv::Mat& rightImage, float* disparityImage);
+  void setDisparityTotal(const int disparityTotal);
+  void setDisparityFactor(const double disparityFactor);
+  void setDataCostParameters(const int sobelCapValue,
+                 const int censusWindowRadius,
+                 const double censusWeightFactor,
+                 const int aggregationWindowRadius);
+  void setSmoothnessCostParameters(const int smoothnessPenaltySmall, const int smoothnessPenaltyLarge);
+  void setConsistencyThreshold(const int consistencyThreshold);
+  void setEnforceLeftRightConsistency(const bool enforceLeftRightConsistency);
+
+  void initialize(const int width, const int height);
+  void compute(const cv::Mat& leftImage, const cv::Mat& rightImage, float* disparityImage);
 
 private:
-	void setImageSize(const int width, const int height);
-	void allocateDataBuffer();
-	void freeDataBuffer();
-	void computeCostImage(const cv::Mat& leftImage, const cv::Mat& rightImage);
-	void computeLeftCostImage(const unsigned char* leftGrayscaleImage, const unsigned char* rightGrayscaleImage);
-	void computeCappedSobelImage(const unsigned char* image, const bool horizontalFlip, unsigned char* sobelImage) const;
-	void computeCensusImage(const unsigned char* image, int* censusImage) const;
-	void calcTopRowCost(unsigned char*& leftSobelRow, int*& leftCensusRow,
-						unsigned char*& rightSobelRow, int*& rightCensusRow,
-						unsigned short* costImageRow);
-	void calcRowCosts(unsigned char*& leftSobelRow, int*& leftCensusRow,
-					  unsigned char*& rightSobelRow, int*& rightCensusRow,
-					  unsigned short* costImageRow);
-	void calcPixelwiseSAD(const unsigned char* leftSobelRow, const unsigned char* rightSobelRow);
-	void calcHalfPixelRight(const unsigned char* rightSobelRow);
-	void addPixelwiseHamming(const int* leftCensusRow, const int* rightCensusRow);
-	void computeRightCostImage();
-	void performSGM(unsigned short* costImage, unsigned short* disparityImage);
-	void speckleFilter(const int maxSpeckleSize, const int maxDifference, unsigned short* image) const;
-	void enforceLeftRightConsistency(unsigned short* leftDisparityImage, unsigned short* rightDisparityImage) const;
+  void setImageSize(const int width, const int height);
+  void allocateDataBuffer();
+  void freeDataBuffer();
+  void computeCostImage(const cv::Mat& leftImage, const cv::Mat& rightImage);
+  void computeLeftCostImage(const unsigned char* leftGrayscaleImage, const unsigned char* rightGrayscaleImage);
+  void computeCappedSobelImage(const unsigned char* image, const bool horizontalFlip, unsigned char* sobelImage) const;
+  void computeCensusImage(const unsigned char* image, int* censusImage) const;
+  void calcTopRowCost(unsigned char*& leftSobelRow, int*& leftCensusRow,
+            unsigned char*& rightSobelRow, int*& rightCensusRow,
+            unsigned short* costImageRow);
+  void calcRowCosts(unsigned char*& leftSobelRow, int*& leftCensusRow,
+            unsigned char*& rightSobelRow, int*& rightCensusRow,
+            unsigned short* costImageRow);
+  void calcPixelwiseSAD(const unsigned char* leftSobelRow, const unsigned char* rightSobelRow);
+  void calcHalfPixelRight(const unsigned char* rightSobelRow);
+  void addPixelwiseHamming(const int* leftCensusRow, const int* rightCensusRow);
+  void computeRightCostImage();
+  void performSGM(unsigned short* costImage, unsigned short* disparityImage);
+  void speckleFilter(const int maxSpeckleSize, const int maxDifference, unsigned short* image) const;
+  void enforceLeftRightConsistency(unsigned short* leftDisparityImage, unsigned short* rightDisparityImage) const;
 
 
-	// Parameter
-	int disparityTotal_;
-	double disparityFactor_;
-	int sobelCapValue_;
-	int censusWindowRadius_;
-	double censusWeightFactor_;
-	int aggregationWindowRadius_;
-	int smoothnessPenaltySmall_;
-	int smoothnessPenaltyLarge_;
-	int consistencyThreshold_;
-	bool enforceLeftRightConsistency_;
+  // Parameter
+  int disparityTotal_;
+  double disparityFactor_;
+  int sobelCapValue_;
+  int censusWindowRadius_;
+  double censusWeightFactor_;
+  int aggregationWindowRadius_;
+  int smoothnessPenaltySmall_;
+  int smoothnessPenaltyLarge_;
+  int consistencyThreshold_;
+  int max_speckle_size_;
+  bool enforceLeftRightConsistency_;
 
-	// Data
-	int width_;
-	int height_;
-	int widthStep_;
-	unsigned short* leftCostImage_;
-	unsigned short* rightCostImage_;
-	unsigned char* pixelwiseCostRow_;
-	unsigned short* rowAggregatedCost_;
-	unsigned char* halfPixelRightMin_;
-	unsigned char* halfPixelRightMax_;
-	int pathRowBufferTotal_;
-	int disparitySize_;
-	int pathTotal_;
-	int pathDisparitySize_;
-	int costSumBufferRowSize_;
-	int costSumBufferSize_;
-	int pathMinCostBufferSize_;
-	int pathCostBufferSize_;
-	int totalBufferSize_;
-	short* sgmBuffer_;
-	unsigned short* leftDisparityImage_;
-	unsigned short* rightDisparityImage_;
-	unsigned char* leftSobelImage_;
-	unsigned char* rightSobelImage_;
-	int* leftCensusImage_;
-	int* rightCensusImage_;
-	bool initialized_;
+  // Data
+  int width_;
+  int height_;
+  int widthStep_;
+  unsigned short* leftCostImage_;
+  unsigned short* rightCostImage_;
+  unsigned char* pixelwiseCostRow_;
+  unsigned short* rowAggregatedCost_;
+  unsigned char* halfPixelRightMin_;
+  unsigned char* halfPixelRightMax_;
+  int pathRowBufferTotal_;
+  int disparitySize_;
+  int pathTotal_;
+  int pathDisparitySize_;
+  int costSumBufferRowSize_;
+  int costSumBufferSize_;
+  int pathMinCostBufferSize_;
+  int pathCostBufferSize_;
+  int totalBufferSize_;
+  short* sgmBuffer_;
+  unsigned short* leftDisparityImage_;
+  unsigned short* rightDisparityImage_;
+  unsigned char* leftSobelImage_;
+  unsigned char* rightSobelImage_;
+  int* leftCensusImage_;
+  int* rightCensusImage_;
+  bool initialized_;
 };

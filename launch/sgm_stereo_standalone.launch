@@ -1,17 +1,47 @@
 <launch>
 
   <arg name="camera" default="stereo" />
-  <arg name="enforce_left_right_consistency" default="true"/>
 
-  <node name="sgm_stereo" pkg="sgm_stereo" type="sgm_stereo_node">
+  <node pkg="nodelet" type="nodelet" name="sgm_stereo_nodelet"  args="standalone sgm_stereo/StereoSGMNode ">
+    <rosparam file="$(find sgm_stereo)/config/sgm_params.yaml" command="load"/>
+
     <remap from="left/image_rect" to="$(arg camera)/left/image_rect" />
     <remap from="right/image_rect" to="$(arg camera)/right/image_rect" />
     <remap from="left/camera_info" to="$(arg camera)/left/camera_info" />
     <remap from="right/camera_info" to="$(arg camera)/right/camera_info" />
     <remap from="disparity" to="$(arg camera)/disparity" />
     <remap from="points2" to="$(arg camera)/points2" />
-
-    <param name="enforce_left_right_consistency" value="$(arg enforce_left_right_consistency)"/>
   </node>
+
+  <group ns="$(arg camera)">
+
+    <!-- Load PCL Filtering parameters for all nodelets -->
+    <rosparam file="$(find sgm_stereo)/config/sgm_pcl_filter_params.yaml" command="load"/>
+
+    <node pkg="nodelet" type="nodelet" name="point_cloud2"
+        args="standalone stereo_image_proc/point_cloud2" respawn="true" >
+        <!-- Grayscale Reconstruction -->
+        <!-- <remap from="left/image_rect_color" to="left/image_rect" /> -->
+        <param name="approximate_sync" value="true" />
+        <param name="queue_size" value="60" />
+
+        <remap from="points2" to="sgm_lower_img/points2" />
+    </node>
+
+
+    <node pkg="nodelet" type="nodelet" name="pcl_manager" args="manager" />
+
+    <!-- Point Cloud Filtering: Culls points far away from robot and applies a voxel filter -->
+    <node pkg="nodelet" type="nodelet" name="voxel_grid_filter" args="load pcl/VoxelGrid pcl_manager" respawn="true">
+      <remap from="~input" to="sgm_lower_img/points2"/>
+      <remap from="~output" to="voxelized_points2"/>
+    </node>
+
+    <!-- Removes points at and below ground level -->
+    <node pkg="nodelet" type="nodelet" name="ground_plane_filter" args="load pcl/VoxelGrid pcl_manager" respawn="true">
+      <remap from="~input" to="voxelized_points2"/>
+      <remap from="~output" to="filtered_ground_points2"/>
+    </node>
+  </group>
 
 </launch>

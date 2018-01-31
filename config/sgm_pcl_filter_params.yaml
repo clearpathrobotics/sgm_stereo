@@ -1,0 +1,11 @@
+voxel_grid_filter:
+  filter_field_name: z
+  filter_limit_min: 0.0
+  filter_limit_max: 4.0
+  leaf_size: 0.01
+
+
+ground_plane_filter:
+  filter_field_name: y
+  filter_limit_min: -0.05
+  filter_limit_max: 10.0

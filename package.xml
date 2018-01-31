@@ -14,8 +14,14 @@
   <depend>image_geometry</depend>
   <depend>image_transport</depend>
   <depend>message_filters</depend>
+  <depend>nodelet</depend>
   <depend>roscpp</depend>
   <depend>sensor_msgs</depend>
   <depend>stereo_msgs</depend>
   <depend>stereo_image_proc</depend>
+
+  <export>
+    <nodelet plugin="${prefix}/nodelet_plugins.xml" />
+  </export>
+
 </package>

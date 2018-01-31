@@ -1,0 +1,7 @@
+<library path="lib/libsgm_stereo_nodelet">
+  <class name="sgm_stereo/StereoSGMNode" type="sgm_stereo::StereoSGMNode" base_class_type="nodelet::Nodelet">
+  <description>
+      SGM Stereo Nodelet.
+  </description>
+  </class>
+</library>

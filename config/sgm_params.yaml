@@ -1,0 +1,20 @@
+# SGM params
+disparity_total: 128
+disparity_factor: 256
+sobel_cap_value: 15
+census_window_radius: 2
+census_weight_factor: 0.166666667
+aggregration_window_radius: 2
+smoothness_penalty_small: 100
+smoothness_penalty_large: 1600
+consistency_threshold: 1
+max_speckle_size: 500
+enforce_left_right_consistency: true
+
+# SGM Node params
+display_debugging_images: false
+rotate_images: true
+
+# Extract TextureLess Regions
+filter_textureless_regions: false
+textureless_thresh: 300

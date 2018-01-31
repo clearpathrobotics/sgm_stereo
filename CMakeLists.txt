@@ -10,6 +10,7 @@ find_package(catkin REQUIRED COMPONENTS
   image_geometry
   image_transport
   message_filters
+  nodelet
   roscpp
   sensor_msgs
   stereo_msgs
@@ -34,11 +35,40 @@ include_directories(
   ${OpenCV_INCLUDE_DIRS}
 )
 
-add_executable(sgm_stereo_node src/sgm_stereo_node.cpp src/SGMStereo.cpp)
-target_compile_options(sgm_stereo_node PRIVATE)
-add_dependencies(sgm_stereo_node ${catkin_EXPORTED_TARGETS})
-target_link_libraries(sgm_stereo_node ${catkin_LIBRARIES} ${OpenCV_LIBS})
-
+# SGM Lib
 add_library(sgm_stereo src/SGMStereo.cpp)
 add_dependencies(sgm_stereo ${catkin_EXPORTED_TARGETS})
 target_link_libraries(sgm_stereo ${catkin_LIBRARIES} ${OpenCV_LIBS})
+
+# SGM Stereo Nodelet
+add_library(${PROJECT_NAME}_nodelet
+  src/sgm_stereo_node.cpp
+)
+
+target_link_libraries(${PROJECT_NAME}_nodelet
+  ${catkin_LIBRARIES}
+  ${OpenCV_LIBS}
+  ${PROJECT_NAME}
+)
+
+
+#############
+## Install ##
+#############
+## Mark executables and/or libraries for installation
+install(
+  TARGETS ${PROJECT_NAME} sgm_stereo sgm_stereo_nodelet
+  ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+  LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+  RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+)
+
+install(FILES nodelet_plugins.xml
+  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
+)
+
+## Mark cpp header files for installation
+install(DIRECTORY include/${PROJECT_NAME}/
+  DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
+  FILES_MATCHING PATTERN "*.h"
+)
