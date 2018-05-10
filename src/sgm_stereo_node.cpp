@@ -19,8 +19,7 @@
 #include "sgm_stereo/sgm_stereo_node.h"
 
 
-PLUGINLIB_DECLARE_CLASS(sgm_stereo, StereoSGMNode, sgm_stereo::StereoSGMNode, nodelet::Nodelet);
-
+PLUGINLIB_EXPORT_CLASS(sgm_stereo::StereoSGMNode, nodelet::Nodelet);
 
 namespace sgm_stereo
 {
